@@ -1,36 +1,258 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vercel Blob Storage Demo
 
-## Getting Started
+This project demonstrates how to use [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) for file storage in a Next.js application. It showcases file uploads, listing, and basic file management capabilities using Vercel's Blob Storage service.
 
-First, run the development server:
+## Features
+
+- 📤 File upload functionality
+- 📋 List uploaded files
+- 🔒 Secure file handling
+- 🎨 TailwindCSS styling
+- ⚡ Built with Next.js App Router
+
+## Technical Details
+
+### Implementation Details
+
+- **Frontend Stack**
+  - Next.js 15.5.4 with App Router
+  - TailwindCSS for styling
+  - React 19.1.0
+  - TypeScript for type safety
+
+- **Backend Services**
+  - Vercel Blob Storage for file management
+  - Next.js API Routes for server-side operations
+  - Server-side and client-side upload implementations
+
+- **Key Components**
+  ```typescript
+  // Example upload implementation
+  async function uploadFile(file: File) {
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'x-upload-type': 'server-side',
+      },
+    });
+    return response.json();
+  }
+  ```
+
+### Performance Optimizations
+- Chunked file uploads for large files
+- Client-side file validation
+- Optimized file listing with pagination
+- Caching implementation for file lists
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- Node.js (v18 or later)
+- npm or yarn
+- A Vercel account
+- Vercel Blob Storage enabled in your project
+
+## Environment Setup
+
+1. Clone this repository
+2. Create a `.env.local` file in the root directory
+3. Add your Vercel Blob token:
+   ```env
+   BLOB_READ_WRITE_TOKEN="your_blob_token_here"
+   ```
+
+To get your Blob token:
+1. Go to your [Vercel Dashboard](https://vercel.com/dashboard)
+2. Select your project
+3. Go to Storage → Blob
+4. Create or copy your token
+
+## Installation
 
 ```bash
+# Install dependencies
+npm install
+
+# Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Troubleshooting Guide
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Common Issues and Solutions
+
+1. **Upload Failures**
+   ```bash
+   Error: Failed to upload file
+   ```
+   - Check BLOB_READ_WRITE_TOKEN is set correctly
+   - Verify file size is within limits (max 500MB)
+   - Ensure proper file permissions
+
+2. **Authentication Errors**
+   ```bash
+   Error: No token found
+   ```
+   - Restart the development server
+   - Check .env.local file exists
+   - Verify token hasn't expired
+
+3. **Build Errors**
+   ```bash
+   Error: Cannot find module '@/components/...'
+   ```
+   - Clear .next directory
+   - Verify tsconfig.json paths
+   - Run npm install
+
+### Debug Mode
+Enable debug mode by setting:
+```env
+DEBUG=vercel-blob:*
+```
+
+### Performance Issues
+- Use the Network tab to monitor upload speeds
+- Check file compression settings
+- Verify chunk size configurations
+
+## Project Structure
+
+```
+app/
+├── api/
+│   ├── blobs/      # API route for listing files
+│   ├── upload/     # API route for file uploads
+│   └── client-upload/
+├── upload/         # Upload page component
+└── page.tsx        # Main page
+components/
+└── BlobList.tsx    # File listing component
+```
+
+## API Routes
+
+- `GET /api/blobs` - List all uploaded files
+- `POST /api/upload` - Upload files (server-side)
+- `POST /api/client-upload` - Upload files (client-side)
+
+## Enhanced Security Considerations
+
+### Data Protection
+- Implement client-side encryption for sensitive files
+- Use Azure Key Vault or AWS KMS for key management
+- Enable audit logging for all file operations
+
+### Access Control
+```typescript
+// Example security middleware
+export async function validateRequest(req: NextApiRequest) {
+  // Validate authentication
+  const token = req.headers.authorization;
+  if (!await verifyToken(token)) throw new Error('Unauthorized');
+  
+  // Rate limiting
+  await rateLimit(req);
+  
+  // Scan for malware
+  await scanFile(req.body);
+}
+```
+
+### Best Practices
+1. **File Validation**
+   - Implement mime type checking
+   - Scan for malware
+   - Validate file size limits
+
+2. **Access Management**
+   - Use signed URLs with expiration
+   - Implement role-based access
+   - Enable audit logging
+
+3. **Data Privacy**
+   - Encrypt sensitive data
+   - Implement data retention policies
+   - Set up secure key rotation
+
+4. **Compliance**
+   - GDPR considerations
+   - HIPAA compliance (if needed)
+   - Data residency requirements
+
+## Contribution Guidelines
+
+### Getting Started
+1. Fork the repository
+2. Create a feature branch
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. Make your changes
+4. Submit a pull request
+
+### Code Style
+- Use ESLint and Prettier configs
+- Follow TypeScript best practices
+- Write meaningful commit messages
+
+### Testing
+```bash
+# Run tests
+npm run test
+
+# Run specific test suite
+npm run test:unit
+
+# Check types
+npm run type-check
+```
+
+### Pull Request Process
+1. Update documentation
+2. Add tests for new features
+3. Ensure CI passes
+4. Get code review approval
+
+## Deployment
+
+Deploy your own version of this demo:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/vercel-blob-demo)
+
+Remember to:
+1. Configure environment variables in your Vercel project settings
+2. Enable Blob Storage in your Vercel project
+3. Set up proper access controls
+
+### Production Checklist
+- [ ] Set up monitoring
+- [ ] Configure error tracking
+- [ ] Enable usage analytics
+- [ ] Review security settings
+- [ ] Set up backup strategy
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+- [Vercel Blob Documentation](https://vercel.com/docs/storage/vercel-blob)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [TailwindCSS Documentation](https://tailwindcss.com/docs)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+MIT License - feel free to use this demo as a starting point for your own projects!
 
-## Deploy on Vercel
+## Support
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For support, please:
+1. Check the troubleshooting guide
+2. Search existing issues
+3. Create a new issue with:
+   - Environment details
+   - Steps to reproduce
+   - Expected vs actual behavior
